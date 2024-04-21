@@ -1,11 +1,18 @@
+require('dotenv').config()
+
 const express = require('express')
-const PORT = process.env.PORT || 8080
+const router = require('./routes')
+const errorMiddleware = require('./middlewares/error.middleware')
+
 const app = express()
 
-const router = require('./routes/index.js')
+app.use(express.json())
+app.use('/api/v1', router)
+app.use(errorMiddleware)
 
-app.use('/', router)
+// eslint-disable-next-line no-undef
+const PORT = process.env.PORT ?? 8080
 
 app.listen(PORT, () => {
-	console.log(`server started on port ${PORT}`)
+  console.log(`Server started on PORT ${PORT}`)
 })

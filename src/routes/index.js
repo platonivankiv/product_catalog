@@ -1,7 +1,8 @@
-const express = require('express')
-const router = express.Router()
-const baseController = require('../controllers/baseController')
+const Router = require('express')
+const productsRouter = require('./products')
 
-router.get('/', baseController.helloWorld)
+const router = new Router()
+
+router.use('/products', productsRouter)
 
 module.exports = router
