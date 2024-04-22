@@ -4,7 +4,31 @@ const ApiError = require('../exceptions/api.error')
 class ProductsController {
   async getProductsList(req, res, next) {
     try {
-      const productsList = await productsService.getProductsList()
+      const {
+        page,
+        pageSize,
+        orderBy,
+        orderDirection,
+        minPrice,
+        maxPrice,
+        minCreatedAt,
+        maxCreatedAt,
+        minUpdatedAt,
+        maxUpdatedAt,
+      } = req.query
+
+      const productsList = await productsService.getProductsList(
+        page,
+        pageSize,
+        orderBy,
+        orderDirection,
+        minPrice,
+        maxPrice,
+        minCreatedAt,
+        maxCreatedAt,
+        minUpdatedAt,
+        maxUpdatedAt,
+      )
 
       if (!productsList.length) {
         throw ApiError.BadRequestException('Products are empty')
@@ -83,6 +107,16 @@ class ProductsController {
         msg: 'Product deleted successfully.',
         deletionResult,
       })
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async findProductBySku(req, res, next) {
+    try {
+      const { sku } = req.params
+      const product = await productsService.findProductBySku(sku)
+      res.json(product)
     } catch (error) {
       next(error)
     }
