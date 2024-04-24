@@ -39,7 +39,7 @@ class ProductsService {
     return prisma.product.findMany({
       where: whereOptions,
       take: size,
-      skip: skip,
+      skip,
       orderBy: {
         [orderBy]: orderDirection,
       },
