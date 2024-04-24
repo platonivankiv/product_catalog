@@ -4,35 +4,8 @@ const ApiError = require('../exceptions/api.error')
 class ProductsController {
   async getProductsList(req, res, next) {
     try {
-      const {
-        page,
-        pageSize,
-        orderBy,
-        orderDirection,
-        minPrice,
-        maxPrice,
-        minCreatedAt,
-        maxCreatedAt,
-        minUpdatedAt,
-        maxUpdatedAt,
-      } = req.query
+      const productsList = await productsService.getProductsList(req.query)
 
-      const productsList = await productsService.getProductsList(
-        page,
-        pageSize,
-        orderBy,
-        orderDirection,
-        minPrice,
-        maxPrice,
-        minCreatedAt,
-        maxCreatedAt,
-        minUpdatedAt,
-        maxUpdatedAt,
-      )
-
-      if (!productsList.length) {
-        throw ApiError.BadRequestException('Products are empty')
-      }
       res.json(productsList)
     } catch (error) {
       next(error)
@@ -44,7 +17,7 @@ class ProductsController {
       const { id } = req.params
 
       if (isNaN(id)) {
-        throw ApiError.BadRequestException('Product ID must be a number.')
+        throw ApiError.BadRequest('Product ID must be a number.')
       }
 
       const product = await productsService.getOneProduct(id)
@@ -68,7 +41,7 @@ class ProductsController {
       const { id } = req.params
 
       if (isNaN(id)) {
-        throw ApiError.BadRequestException('Product ID must be a number.')
+        throw ApiError.BadRequest('Product ID must be a number.')
       }
 
       const updatedProduct = await productsService.updateProduct(id, req.body)
@@ -83,7 +56,7 @@ class ProductsController {
       const { id } = req.params
 
       if (isNaN(id)) {
-        throw ApiError.BadRequestException('Product ID must be a number.')
+        throw ApiError.BadRequest('Product ID must be a number.')
       }
 
       await productsService.deleteProduct(id)
@@ -98,7 +71,7 @@ class ProductsController {
       const { ids } = req.body
 
       if (!Array.isArray(ids)) {
-        throw ApiError.BadRequestException('Product IDs must be an array.')
+        throw ApiError.BadRequest('Product IDs must be an array.')
       }
 
       const deletionResult = await productsService.deleteMultipleProducts(ids)
@@ -107,16 +80,6 @@ class ProductsController {
         msg: 'Product deleted successfully.',
         deletionResult,
       })
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  async findProductBySku(req, res, next) {
-    try {
-      const { sku } = req.params
-      const product = await productsService.findProductBySku(sku)
-      res.json(product)
     } catch (error) {
       next(error)
     }

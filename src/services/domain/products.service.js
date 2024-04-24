@@ -1,48 +1,79 @@
 const prisma = require('../db/prisma')
 
 class ProductsService {
-  async getProductsList(
-    page,
-    pageSize,
-    orderBy,
-    orderDirection,
-    minPrice,
-    maxPrice,
-    minCreatedAt,
-    maxCreatedAt,
-    minUpdatedAt,
-    maxUpdatedAt,
-  ) {
-    if (!page || !pageSize) {
-      return prisma.product.findMany()
-    }
+  productsListWhereOptions(data) {
+    const {
+      page = 1,
+      limit,
+      sortBy = 'id',
+      sort = 'asc',
+      minPrice,
+      maxPrice,
+      fromCreatedAt,
+      toCreatedAt,
+      fromUpdatedAt,
+      toUpdatedAt,
+      search,
+    } = data
 
-    const pageNum = parseInt(page, 10)
-    const size = parseInt(pageSize, 10)
+    const skip = (+page - 1) * (+limit || 0)
 
-    // Validation
-    // const validOrderBy = ['id', 'name', 'price', 'createdAt', 'updatedAt']
-    // const order = validOrderBy.includes(orderBy) ? orderBy : 'id'
-    // const direction = orderDirection === 'desc' ? 'desc' : 'asc'
-
-    const skip = (pageNum - 1) * size
+    const whereAnd = []
 
     const whereOptions = {
       ...(minPrice && { price: { gte: parseFloat(minPrice) } }),
       ...(maxPrice && { price: { lte: parseFloat(maxPrice) } }),
-      ...(minCreatedAt && { createdAt: { gte: new Date(minCreatedAt) } }),
-      ...(maxCreatedAt && { createdAt: { lte: new Date(maxCreatedAt) } }),
-      ...(minUpdatedAt && { updatedAt: { gte: new Date(minUpdatedAt) } }),
-      ...(maxUpdatedAt && { updatedAt: { lte: new Date(maxUpdatedAt) } }),
+      ...(fromCreatedAt && {
+        createdAt: { gte: new Date(fromCreatedAt).toISOString() },
+      }),
+      ...(toCreatedAt && {
+        createdAt: { lte: new Date(toCreatedAt).toISOString() },
+      }),
+      ...(fromUpdatedAt && {
+        updatedAt: { gte: new Date(fromUpdatedAt).toISOString() },
+      }),
+      ...(toUpdatedAt && {
+        updatedAt: { lte: new Date(toUpdatedAt).toISOString() },
+      }),
     }
 
-    return prisma.product.findMany({
-      where: whereOptions,
-      take: size,
-      skip,
-      orderBy: {
-        [orderBy]: orderDirection,
+    if (Object.keys(whereOptions).length) {
+      whereAnd.push(whereOptions)
+    }
+
+    if (search) {
+      whereAnd.push({
+        sku: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      })
+    }
+
+    const sortOptions = [
+      {
+        [sortBy]: sort,
       },
+    ]
+
+    return {
+      sort: sortOptions,
+      skip,
+      limit: +limit,
+      where: {
+        AND: whereAnd,
+      },
+    }
+  }
+
+  async getProductsList(data) {
+    const { where, skip, limit, sort } = this.productsListWhereOptions(data)
+
+    return prisma.product.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy: sort,
     })
   }
 
@@ -78,17 +109,6 @@ class ProductsService {
       where: {
         id: {
           in: ids,
-        },
-      },
-    })
-  }
-
-  async findProductBySku(sku) {
-    return prisma.product.findMany({
-      where: {
-        sku: {
-          equals: sku,
-          mode: 'insensitive',
         },
       },
     })

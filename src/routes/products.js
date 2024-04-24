@@ -8,7 +8,6 @@ router.get('/:id', productsController.getOneProduct)
 router.post('/', productsController.createProduct)
 router.put('/:id', productsController.updateProduct)
 router.delete('/:id', productsController.deleteProduct)
-router.post('/delete-multiple', productsController.deleteMultipleProducts)
-router.get('/search-by-sku/:sku', productsController.findProductBySku)
+router.delete('/', productsController.deleteMultipleProducts)
 
 module.exports = router
