@@ -1,14 +1,16 @@
 const Router = require('express')
 const productsController = require('../controllers/products.controller')
-const middlewares = require('../middlewares')
-
-console.log(middlewares)
+const { productValidator } = require('../middlewares/validators')
 
 const router = new Router()
 
 router.get('/', productsController.getProductsList)
 
-router.get('/:id', productsController.getOneProduct)
+router.get(
+  '/:id',
+  productValidator.getSingleProduct,
+  productsController.getOneProduct,
+)
 
 router.post('/', productsController.createProduct)
 

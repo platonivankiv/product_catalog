@@ -16,12 +16,8 @@ class ProductsController {
     try {
       const { id } = req.params
 
-      if (isNaN(id)) {
-        throw ApiError.BadRequest('Product ID must be a number.')
-      }
-
       const product = await productsService.getOneProduct(id)
-      res.json(product)
+      return res.send(product)
     } catch (error) {
       next(error)
     }
