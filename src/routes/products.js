@@ -1,21 +1,39 @@
 const Router = require('express')
 const productsController = require('../controllers/products.controller')
-const middlewares = require('../middlewares')
-
-console.log(middlewares)
+const { productValidator } = require('../middlewares/validators')
 
 const router = new Router()
 
 router.get('/', productsController.getProductsList)
 
-router.get('/:id', productsController.getOneProduct)
+router.get(
+  '/:id',
+  productValidator.getSingleProduct,
+  productsController.getOneProduct,
+)
 
-router.post('/', productsController.createProduct)
+router.post(
+  '/',
+  productValidator.createProduct,
+  productsController.createProduct,
+)
 
-router.put('/:id', productsController.updateProduct)
+router.put(
+  '/:id',
+  [productValidator.getSingleProduct, productValidator.createProduct],
+  productsController.updateProduct,
+)
 
-router.delete('/:id', productsController.deleteProduct)
+router.delete(
+  '/:id',
+  productValidator.getSingleProduct,
+  productsController.deleteProduct,
+)
 
-router.delete('/', productsController.deleteMultipleProducts)
+router.delete(
+  '/',
+  productValidator.deleteProducts,
+  productsController.deleteMultipleProducts,
+)
 
 module.exports = router

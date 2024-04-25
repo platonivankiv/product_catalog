@@ -68,11 +68,11 @@ class ProductsService {
 
   async getProductsList(data) {
     const { where, skip, limit, sort } = this.productsListWhereOptions(data)
-
+    const take = limit && +limit > 0 ? +limit : undefined
     return prisma.product.findMany({
       where,
       skip,
-      take: limit,
+      take,
       orderBy: sort,
     })
   }
