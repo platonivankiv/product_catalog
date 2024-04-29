@@ -10,7 +10,6 @@ app.use(express.json())
 app.use('/api/v1', router)
 app.use(errorMiddleware)
 
-// eslint-disable-next-line no-undef
 const PORT = process.env.PORT ?? 8080
 
 app.listen(PORT, () => {
