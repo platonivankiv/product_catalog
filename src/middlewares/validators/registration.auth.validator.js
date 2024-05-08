@@ -16,7 +16,11 @@ const registrationValidationRules = [
         },
       })
       if (user) {
+<<<<<<< Updated upstream
         throw new ApiError.Conflict(`User with email ${value} already exists.`)
+=======
+        throw ApiError.Conflict(`User with email ${value} already exists.`)
+>>>>>>> Stashed changes
       }
     }),
 
@@ -43,12 +47,21 @@ function authMiddleware(req, res, next) {
       throw ApiError.UnauthorizedError()
     }
 
+<<<<<<< Updated upstream
     req.user = userData
     next()
+=======
+    req.user = { userId: userData.id }
+    return next()
+>>>>>>> Stashed changes
   } catch (error) {
     next(error)
   }
 }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 module.exports = {
   registrationValidationRules,
   authMiddleware,

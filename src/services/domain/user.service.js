@@ -18,13 +18,36 @@ class UserService {
 
     const hashPassword = await bcrypt.hash(password, 3)
 
+<<<<<<< Updated upstream
+=======
+    const defaultRole = await prisma.role.findUnique({
+      where: {
+        name: 'user',
+      },
+    })
+
+>>>>>>> Stashed changes
     const user = await prisma.user.create({
       data: {
         email,
         password: hashPassword,
+<<<<<<< Updated upstream
       },
     })
 
+=======
+        roles: {
+          connect: { id: defaultRole.id },
+        },
+      },
+
+      include: {
+        roles: true,
+      },
+    })
+
+    console.log(user)
+>>>>>>> Stashed changes
     const userDto = new UserDto(user)
     const tokens = tokenService.generateTokens({ ...userDto })
 
@@ -57,6 +80,7 @@ class UserService {
     return { ...tokens, user: userDto }
   }
 
+<<<<<<< Updated upstream
   static async logout(userId) {
     return prisma.token.deleteMany({
       where: {
@@ -65,6 +89,8 @@ class UserService {
     })
   }
 
+=======
+>>>>>>> Stashed changes
   static async getAllUsers() {
     const users = await prisma.user.findMany()
     return users

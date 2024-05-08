@@ -8,30 +8,72 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  sku         String   @unique
+  id          Int        @id @default(autoincrement())
+  sku         String     @unique
   name        String?
   description String?
   price       Float
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @map("updated_at")
+  cartItems   CartItem[]
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @default(now()) @map("updated_at")
 
   @@map("products")
 }
 
+<<<<<<< Updated upstream
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
   password String
   tokens   Token[]
+=======
+model Role {
+  id          Int          @id @default(autoincrement())
+  role        String       @unique
+  label       String
+  description String
+  users       UserToRole[]
+
+  @@map("roles")
+}
+
+model User {
+  id        Int          @id @default(autoincrement())
+  email     String       @unique
+  password  String
+  cartItems CartItem[]
+  roles     UserToRole[]
+>>>>>>> Stashed changes
 
   @@map("users")
 }
 
+<<<<<<< Updated upstream
 model Token {
   id     Int  @id @default(autoincrement())
   user   User @relation(fields: [userId], references: [id])
   userId Int  @unique
 
   @@map("tokens")
+=======
+model UserToRole {
+  id     Int  @id @default(autoincrement())
+  userId Int? @map("user_id")
+  roleId Int? @map("role_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@map("user_to_role")
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @map("product_id")
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int     @map("user_id")
+  quantity  Int
+
+  @@map("cart_items")
+>>>>>>> Stashed changes
 }

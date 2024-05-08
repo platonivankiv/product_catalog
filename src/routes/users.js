@@ -11,7 +11,10 @@ router.post(
   userController.registration,
 )
 router.post('/login', userController.login)
+<<<<<<< Updated upstream
 router.post('/logout', userController.logout)
+=======
+>>>>>>> Stashed changes
 router.get(
   '/users',
   registrationAuthValidator.authMiddleware,
