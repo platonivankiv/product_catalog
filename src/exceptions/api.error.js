@@ -16,6 +16,10 @@ module.exports = class ApiError extends Error {
     return new ApiError(401, 'User not authorized')
   }
 
+  static NotPermissions() {
+    return new ApiError(403, 'Insufficient permissions')
+  }
+
   static Conflict(message) {
     return new ApiError(409, message)
   }
