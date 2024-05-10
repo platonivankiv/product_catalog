@@ -1,8 +1,5 @@
 const { UserService } = require('../services/domain/user.service')
-<<<<<<< Updated upstream
 const prisma = require('../services/db/prisma')
-=======
->>>>>>> Stashed changes
 
 class UsersController {
   async registration(req, res, next) {
@@ -31,7 +28,6 @@ class UsersController {
     }
   }
 
-<<<<<<< Updated upstream
   async logout(req, res, next) {
     try {
       const userId = await prisma.user.userId
@@ -44,8 +40,6 @@ class UsersController {
     }
   }
 
-=======
->>>>>>> Stashed changes
   async getUsers(req, res, next) {
     try {
       const users = await UserService.getAllUsers()

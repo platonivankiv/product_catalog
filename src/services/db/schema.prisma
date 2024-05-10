@@ -20,13 +20,6 @@ model Product {
   @@map("products")
 }
 
-<<<<<<< Updated upstream
-model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  password String
-  tokens   Token[]
-=======
 model Role {
   id          Int          @id @default(autoincrement())
   role        String       @unique
@@ -43,25 +36,16 @@ model User {
   password  String
   cartItems CartItem[]
   roles     UserToRole[]
->>>>>>> Stashed changes
 
   @@map("users")
 }
 
-<<<<<<< Updated upstream
-model Token {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
-
-  @@map("tokens")
-=======
 model UserToRole {
-  id     Int  @id @default(autoincrement())
-  userId Int? @map("user_id")
-  roleId Int? @map("role_id")
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  id     Int   @id @default(autoincrement())
+  userId Int?  @map("user_id")
+  roleId Int?  @map("role_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role? @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   @@map("user_to_role")
 }
@@ -75,5 +59,4 @@ model CartItem {
   quantity  Int
 
   @@map("cart_items")
->>>>>>> Stashed changes
 }
