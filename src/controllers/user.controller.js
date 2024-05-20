@@ -32,7 +32,7 @@ class UsersController {
     try {
       const userId = await prisma.user.userId
       await UserService.logout(userId)
-      return res.status(204).json({
+      return res.status(200).json({
         message: 'You have successfully logged out of your account',
       })
     } catch (error) {

@@ -3,7 +3,7 @@ const prisma = require('../../services/db/prisma')
 
 const checkUserRole = async (req, res, next) => {
   const userId = req.user.userId
-
+  2
   if (!userId) {
     return next(ApiError.UnauthorizedError())
   }
