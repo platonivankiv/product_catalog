@@ -1,5 +1,5 @@
 const prisma = require('../db/prisma')
-const cron = require('node-cron')
+const PaymentService = require('./payment.service')
 
 class CartService {
   async releaseOldReservation() {
@@ -35,45 +35,9 @@ class CartService {
     )
   }
 
-  scheduleReleaseOfOldReservations() {
-    cron.schedule(
-      '0 0 * * *',
-      async () => {
-        console.log(
-          '[CronJob]: The beginning of the task of removing old armor',
-        )
-        try {
-          await this.releaseOldReservation()
-        } catch (error) {
-          console.error('Error while performing cron task:', error)
-        }
-      },
-      {
-        scheduled: true,
-        timezone: 'Europe/Moscow',
-      },
-    )
-  }
-
-  async processPayment(userId) {
-    console.log(`Start of payment processing for the user ${userId}`)
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const paymentSuccessful = true
-
-        if (paymentSuccessful) {
-          resolve({ success: true, message: 'The payment was successful' })
-        } else {
-          reject(new Error('Payment failed'))
-        }
-      }, 2000)
-    })
-  }
-
   async completePurchase(userId, productId, quantity) {
     try {
-      const paymentResult = await this.processPayment(userId)
+      const paymentResult = await PaymentService.processPayment(userId)
 
       if (paymentResult.success) {
         const cartItem = await prisma.cartItem.findFirst({
