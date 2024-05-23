@@ -66,5 +66,25 @@ class ProductsController {
       next(error)
     }
   }
+
+  async uploadProductsFromCSV(req, res) {
+    try {
+      const filePath = req.body.filePath
+      if (!filePath) {
+        return res.status(400).json({ message: 'File path is required' })
+      }
+      const results = await productsService.uploadProductsFromCSV(filePath)
+      res.status(200).json({
+        message: 'Products uploaded successfully',
+        data: results,
+      })
+    } catch (error) {
+      console.error('Error uploading products from CSV:', error)
+      res.status(500).json({
+        message: 'An error occurred while uploading products',
+        error: error.message,
+      })
+    }
+  }
 }
 module.exports = new ProductsController()

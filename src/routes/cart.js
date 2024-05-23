@@ -11,4 +11,16 @@ router.post(
   cartController.addItemToCart,
 )
 
+router.post(
+  '/cart/checkout',
+  registrationAuthValidator.authMiddleware,
+  cartController.checkout,
+)
+
+router.get(
+  '/cart',
+  registrationAuthValidator.authMiddleware,
+  cartController.getCartItems,
+)
+
 module.exports = router

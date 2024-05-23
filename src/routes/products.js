@@ -48,4 +48,11 @@ router.delete(
   productsController.deleteMultipleProducts,
 )
 
+router.post(
+  '/upload',
+  registrationAuthValidator.authMiddleware,
+  checkUserRole,
+  productsController.uploadProductsFromCSV,
+)
+
 module.exports = router
