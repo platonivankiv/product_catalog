@@ -1,7 +1,10 @@
 const prisma = require('../db/prisma')
 const fs = require('fs')
 const csv = require('csv-parser')
-const { Transform } = require('stream')
+const { Transform, pipeline } = require('stream')
+const { promisify } = require('util')
+
+const pipelineAsync = promisify(pipeline)
 
 class ProductsService {
   productsListWhereOptions(data) {
@@ -119,42 +122,31 @@ class ProductsService {
 
   async uploadProductsFromCSV(filePath) {
     const results = []
+    let readableStream = fs.createReadStream(filePath)
 
-    const parser = fs
-      .createReadStream(filePath)
-      .pipe(csv())
-      .pipe(
-        new Transform({
-          objectMode: true,
-          transform: async (chunk, callback) => {
-            try {
-              const data = {
-                sku: chunk.sku,
-                name: chunk.name || null,
-                description: chunk.description || null,
-                price: parseFloat(chunk.price) || null,
-                quantity: parseInt(chunk.quantity) || 0,
-              }
-              const result = await this.createProduct(data)
-              results.push(result)
-              callback(null, result)
-            } catch (error) {
-              callback(error)
-            }
-          },
-        }),
-      )
-    return new Promise((resolve, reject) => {
-      parser
-        .on('error', (error) => {
-          console.error('Error parsing CSV:', error)
-          reject(error)
-        })
-        .on('finish', () => {
-          console.log('Finished uploading products')
-          resolve(results)
-        })
+    const parser = new Transform({
+      objectMode: true,
+      transform: async (chunk, encoding, callback) => {
+        try {
+          const data = {
+            sku: chunk.sku,
+            name: chunk.name || null,
+            description: chunk.description || null,
+            price: parseFloat(chunk.price) || null,
+            quantity: parseInt(chunk.quantity) || 0,
+          }
+          const result = await this.createProduct(data)
+          results.push(result)
+          callback(null)
+        } catch (error) {
+          callback(error)
+        }
+      },
     })
+
+    await pipelineAsync(readableStream, csv(), parser)
+    console.log('Finished uploading products')
+    return results
   }
 }
 
